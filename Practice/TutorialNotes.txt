@@ -1,0 +1,29 @@
+a) T02.01- Exercise-CreateLayout gives a good enough template that you can use in your future Andoird App. Search for GitHub queries!!!
+
+Android Design Tips:
+1) Concept of FrameLayout i.e all of them overlap with each other. Before searching, all of them are invisible.  Just before the netWork Query, just make the Progress Dialog visible. After the network query, make the Progress Query DIsabled. Now make the resuts visible.
+
+<FrameLayout>
+  <ScrollView >
+  	<TextView results>
+  </ScrollView>
+  <ProgressDialog invisible>
+  <TextView errors invisible>
+</FrameLayout> 
+
+
+2) Menus and their importance. Tapping and overriding methodsz which tell what to do if menus are clicked. 
+3) Button and OnCickListener. Button.onClickListener() 
+
+str = {"name":{"firstName":"Akhil","lastName":"Vemula"},"age":"22"};
+4) JSONObject object = new JSONObject(str);
+   JSONObject name = object.getJSONObject("name");
+   String age = object.getString("age");
+   String firstName = name.getStirng("firtName");
+
+
+Chapter-2 Summary:
+a) GitHub API https://api.github.com/search/repositories?q=akhil&sort=stars
+b) Menu for clicking to get Data, EditText , TextView inside ScrollView for showing data. ProgressBar 
+c) AysncTask when needed to long Network calls 
+ 
