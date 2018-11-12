@@ -26,4 +26,96 @@ Chapter-2 Summary:
 a) GitHub API https://api.github.com/search/repositories?q=akhil&sort=stars
 b) Menu for clicking to get Data, EditText , TextView inside ScrollView for showing data. ProgressBar 
 c) AysncTask when needed to long Network calls 
- 
+
+
+##########################################################################
+Chapter-4 Intents Summary and what we learned:
+
+Intents are useful for communication between 2 activities. They are basically like courier.
+1) Explicit Intents: Sometimes we create both the activites, sometimes and intents are useful for communication between them. This is called Explicit intents.
+
+MainActivity.java:
+
+Have a EditTextView and a button. The Button has a OnClickListener. When you press the button, you must move to a different activity.
+
+button.OnClickListener( (v) -> {
+	Intent intent = new Intent(MainActivity.this,ChildActivity.class);
+	startActivity(intent);
+});
+
+This will lead us to the ChildActivity. If we want to pass someData to a childActivity, do :
+
+button.OnClickListener( (v) -> {
+	Intent intent = new Intent(MainActivity.this,ChildActivity.class);
+	intent.putExtra(Intent.EXTRA_TEXT, value);
+	startActivity(intent);
+});
+
+on ChildActivity.java:
+
+Intent intentRecievied = getIntent();
+if(intentReceived.hasExtra(Intent.EXTRA_TEXT))
+	String value = intent.getStringExtra(Intent.EXTRA_TEXT);
+	mTextValue.setString(value);
+
+If we want to press backButton and go back to MainActivity, we need to add:
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".DetailActivity"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+
+
+Implicit Intents:
+	If we want someApp to open Maps, Music, Camera or Internet, we do not need to be worried and we just pass an Intent with a Key value specific to one thing like Internet. 
+
+	PageToRefer: Common INtents in android developer
+	https://developer.android.com/guide/components/intents-common#Browser
+
+	Implicit intents have 2 things: an action(Intent.ACTION_VIEW) and Data (Uri)
+
+	In case we want to open a website,
+
+public void openWebPage(String url) {
+    Uri webpage = Uri.parse(url);
+    Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
+    if (intent.resolveActivity(getPackageManager()) != null) {
+        startActivity(intent);
+    }
+}
+
+Uri can be used for opening Map Location like a web-page. Url is a form of URI
+Like a website is "http://udacity.com", Map Location is "geo:47.6,-122.3" or "geo:0,0?q=1600+Amphitheatre+Parkway%2C+CA" or "geo:0,0?q=34.99,-106.61(Treasure)"
+scheme:[//[user:password@]host[:port]][/]path[?query][#fragment]
+
+SquareBracket is optional
+For opening Map locations ,
+
+public void onClickOpenAddressButton(View v){
+	String AddressString = "1600 Amphitheatre Parkway, CA"
+	Uri.Builder builder = new Uri.Builder();
+	builder.scheme("geo").path("0,0").query(addressString);
+	Uri addressUri = builder.build();
+
+	Intent intent = new Intent(Intent.ACTION_VIEW);
+	intent.setData(addressUri);
+}
+
+Implementing a Share Intent:
+Many types we would want to share a data, Basically we want to implement a functionality like Share. Pressing on the menu and able to share some Data, we can use ShareIntent
+
+Intent shareIntent = ShareCompat.IntentBuilder.from(activity).setType("text/plain").setText("somee text").getIntent();
+startActivity(shareIntent);
+
+Data types can be --> impage/png && video/mp4
