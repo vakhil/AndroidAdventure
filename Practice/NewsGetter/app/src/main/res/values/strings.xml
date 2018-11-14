@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">NewsGetter</string>
+    <string name="button_main">Click for News!!!</string>
+</resources>
