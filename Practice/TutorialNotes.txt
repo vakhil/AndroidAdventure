@@ -119,3 +119,116 @@ Intent shareIntent = ShareCompat.IntentBuilder.from(activity).setType("text/plai
 startActivity(shareIntent);
 
 Data types can be --> impage/png && video/mp4
+
+Excersies on ToyAPp--> Just creating new Activities and passing data between THem
+
+Having an EditView and A button. If someone presses the button, we take what is in the EditView and pass It on to the NextView which by template default will have a TextView.
+
+Sunshine Exercise --> 
+The present status of the App is that it has a RecyclerVIew with each view denoting a weatheer of some place. In the starting, the app makes a neetwork call with an async task which gets a lot of entries. Now, in this chapter we implemented another activity such that if any view is pressed, we go to Another Activity using an intent containing the viewpressed's data. There, we implemented Share option using a share menuItem.
+
+Having A recyclerView and Adapter now, if I click on any weather of ViewHolder , we will take that data (Adapter.getPosition()) and pass the data to other view.
+
+
+
+Remember, any ObjectVIew like button which has an method like setOnClickListener will take in a object which has implemented OnClick method . This is because 
+
+interface OnClickListener
+{
+	public void onClick(View v)
+	{
+
+	}
+}
+
+
+
+#####################################################################
+Chapter-6 Preferences: 
+
+What if you had an App and wanted a way to specifiy your own customizions like Text Size and stuff in it. How would you do that? Using Preferences...
+
+
+
+Data Persistence in Android:
+a) savedInstanceStates --> allows you to save key/value pairs so as to keep setting when app is actively running . When we rotate a screen, OnStart() and OnResume are called and when we can pass our data using Bundle.
+b) SharedPrefernces --> allows you to save key/value pair on a file so that data stays on the system even after shutting and restarting.
+c) SQLiteDatabase --> if lots of fields are required to save
+d) Internal Storage
+e) Cloud
+
+If you want to create a Settings like screen,  4 things are rquired
+a) A new Activity and it's corresponding XML (SettingsActivity.java & activity_settings.xml) Here we display our settings Activity
+b) SettingsFragment.java which extends PreferenceFragmentCompat
+c) pref_visualizer.xml in xml directory . This has code for UI of SettingsFragment.java
+
+SettingsActivity.java
+
+onCreate()
+{
+        super.onCreate(savedInstanceState);
+        this.setContentView(R.layout.activity_settings);
+}
+
+activity_settings.xml
+
+<fragment xmlns:android="http://schemas.android.com/apk/res/android"
+          android:name="com.example.android.sunshine.SettingsFragment"
+          android:id="@+id/weather_settings_fragment"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent" />
+
+SettingsFragment.java
+
+public class SettingsFragment extends PreferenceFragmentCompat{
+	
+	  @Override
+    public void onCreatePreferences(Bundle bundle, String s) {
+    	addPreferencesFromResource(R.xml.pref_visualiser);
+    }
+}
+
+pref_visualiser.xml
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent">
+
+    <EditTextPreference
+        android:defaultValue="@string/pref_location_default"
+        android:inputType="text"
+        android:key="@string/pref_location_key"
+        android:singleLine="true"
+        android:title="@string/pref_location_label" />
+
+    <ListPreference
+        android:defaultValue="@string/pref_units_metric"
+        android:entries="@array/pref_units_options"
+        android:entryValues="@array/pref_units_values"
+        android:key="@string/pref_units_key"
+        android:title="@string/pref_units_label" />
+
+</PreferenceScreen>
+
+If we want to Update any UI after changing the preferences, we can add Listeners to the UI which we want to change like,
+
+public class MainActivity extends AppCompatActivity implements
+        ForecastAdapter.ForecastAdapterOnClickHandler{
+        	OnCreate()
+        	{
+        		     PreferenceManager.getDefaultSharedPreferences(this)
+                .registerOnSharedPreferenceChangeListener(this);
+        	}
+
+        	    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+        PREFERENCES_HAVE_BEEN_UPDATED = true;
+    }
+
+
+        }
+
+Summary of Lesson: SharedPreferences is a way to store key/value pairs permanently. And How can we produce the UI required to achieve that?
+And how can we achieve the changes in UI when any setting is changed?
+
+Summary of the SunShine App: We can specify a user location and change Metric system of the app and that change, now gets reflected in the main App. SharedPreferences Concept is highlighted. When loading the App, network calls are made and Weather of all next 7 days are shown. If clicking on one app, we go to a new intent. 
