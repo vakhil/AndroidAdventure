@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">PlayingArond</string>
+    <string name="simple_text">Sleep time in seconds</string>
+    <string name="button">SLEEP</string>
+</resources>
