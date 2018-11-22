@@ -1,0 +1,108 @@
+Android UI Design-Tips:
+
+RelativeLayout--> All you need to know
+
+Refer this: https://abhiandroid.com/ui/relative-layout
+
+If you want to make any relation between any 2 edges AlignXXXXX is the way to go. Suppose you have 2 textViews and You want the 2 textViews in one same line one below the other. Here, it means we wanna form a relation between leftEdge of TextView1 and leftEdge of TextView2. Heree, we use alignLeft
+
+	TextView1
+	TextView2
+
+
+Code is 
+<TextView  android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+<TextView android:id="@+id/textView2"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignLeft = "true"/>
+
+If we want to move the TextView2 10dp left to the edge of TextView2. We can do it this way by adding a margin:
+<TextView android:id="@+id/textView2"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignLeft = "true"
+		android:layout_marginLeft="10dp"/>
+
+Basically layout_alignLeft or layout_alignRight just forms a relation between the edges. Then, next it is taken care of marginLeft and marginRight.
+
+
+1) AlignBottom (layout_alignBottom)
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+        <Button
+        android:id="@+id/button3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+
+        <Button
+        android:id="@id/button4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/button3">
+
+</RelativeLayout>
+
+Here, button4 is now related to button3 such that their both bottoms are on a same horizontal level. If you move button3, button4 also moves. But if you move button 4, first and then try to move button3 , their vertical distance after the first move remains same and again button 4 moves with button3.
+
+Similarly for alignLeft which makes the button3 and button4 left horizontal side on the same vertical level.
+
+AlignParentLeft, AlignParentRight, AlignParentTop, AlignParentBottom are also same but here, the element is added to the left edge of the parent
+
+CenterInParent, CenterHorizontal, CenterVertical are self-explanatory
+
+######################################################################
+
+GridLayout
+https://medium.com/google-developer-experts/android-grid-layout-1faf0df8d6f2
+
+Adding comment section in FaceBook. An icon of DP and comment section where each comment can extend to any length how much is possible. This needs to be in a grid or table like structure with 2 columns with one column as DP and another one as 
+
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:columnCount="2"
+    android:visibility="visible">
+
+    <Button
+        android:layout_width="0dp"
+        android:layout_height="120dp"
+        android:layout_gravity="fill_horizontal"
+        android:layout_columnSpan="2"
+        android:background="@color/colorPrimary" />
+
+    <ImageView android:background="#000000"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        />
+    <TextView android:layout_width="0dp"
+        android:layout_gravity="fill_horizontal"
+        android:layout_height="wrap_content"
+        android:textSize="22sp"
+        android:text="My name is AKhil and I come from a small village. Help me out Please. I hope you can help me out!!"/>
+
+    <ImageView android:background="#000000"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        />
+    <TextView android:layout_width="0dp"
+        android:layout_gravity="fill_horizontal"
+        android:layout_height="wrap_content"
+        android:textSize="22sp"
+        android:text="My name is AKhil and I come from a small village. Help me out Please. I hope you can help me out!!"/>
+
+
+</GridLayout>
+
+
+If you
