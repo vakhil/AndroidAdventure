@@ -34,14 +34,14 @@ import java.util.Random;
         boxes[boxNo] = playerCharacter;
         numberOfMoves++;
 
-        if(numberOfMoves == boxes.length)
-        { return UtilityVariables.GAME_COMPLETED; }
-
-
         if(checkSuccesfulEnd())
         {
             return UtilityVariables.YOU_WON;
         }
+
+        if(numberOfMoves == boxes.length)
+        { return UtilityVariables.GAME_COMPLETED; }
+
         latestAIMove = AIPlay();
         numberOfMoves++;
         if(checkSuccesfulEnd())

@@ -16,6 +16,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".ChoosePlayer" />
+        <activity android:name=".GamePlayActivity"
+            android:parentActivityName="com.example.akhil.tictactoe.ChoosePlayer">
+        </activity>
     </application>
 
 </manifest>

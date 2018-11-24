@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">TicTacToe</string>
+    <string name="positive_popup_text_default">You were succesful in beating the computer</string>
+    <string name="positive_popup_title_default">Done Like A Boss!!!</string>
+
+    <string name="negative_popup_text_default">You have failed in beating the computer</string>
+    <string name="negative_popup_title_default">Fucking Loser!!!</string>
+
+    <string name="new_game">New Game</string>
+    <string name="about_me">About</string>
+
 </resources>
