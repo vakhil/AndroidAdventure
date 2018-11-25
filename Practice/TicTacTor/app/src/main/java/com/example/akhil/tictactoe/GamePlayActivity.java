@@ -1,6 +1,7 @@
 package com.example.akhil.tictactoe;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -20,6 +21,8 @@ import android.widget.Toast;
 
 import com.example.akhil.tictactoe.Utility.UtilityVariables;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import static com.example.akhil.tictactoe.Utility.UtilityVariables.ALREADY_OCCUPIED;
@@ -35,6 +38,7 @@ public class GamePlayActivity extends AppCompatActivity implements View.OnClickL
 
     private final char X_PLAY = 'X';
     private final char O_PLAY = 'O';
+    private final char NO_PLAY = ' ';
 
     private int ALREADY_OCCUPIED = 0;
     private int GAME_COMPLETED = 1;
@@ -42,31 +46,59 @@ public class GamePlayActivity extends AppCompatActivity implements View.OnClickL
     private int YOU_LOST = 3;
     private int GO_ON = 4;
 
-
+    //State_variables showing what characters are present in every button
+    char[] stateButton;
+    String[] buttonNames ;
 
     private char playerSelected;
     private HashMap<Integer,Integer> buttonIndexRelation;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        stateButton = new char[9];
+        Arrays.fill(stateButton,NO_PLAY);
+        buttonNames = new String[]{"b11","b12","b13","b21","b22","b23","b31","b32","b33"};
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
-        //Add back buttons
-      //  getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         gamePlay = new GamePlay(X_PLAY,O_PLAY);
         buttonIndexRelation = new HashMap<>();
         //Setting OnClick Listeners for all buttons and all association of all Buttons with their indexes
-        setOnClickListener();
         playerSelected = X_PLAY;
 
         showDialog = new Dialog(this);
+
+
+        Intent receivedIntent = getIntent();
+        if(receivedIntent.hasExtra(Intent.EXTRA_TEXT))
+        {
+            restoreAllCharacters();
+        }
+
+        setOnClickListener();
+
+        //Add back buttons
+      //  getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+
     }
 
-    //    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+    void restoreAllCharacters()
+    {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        int index = 0;
+        for(String str: buttonNames)
+        {
+            if(sharedPreferences.getString(str,String.valueOf(O_PLAY)).charAt(0) != ' ' ) {
+                UICharacterPlace(index, sharedPreferences.getString(str, String.valueOf(O_PLAY)).charAt(0),0);
+                gamePlay.restoreValues(index,sharedPreferences.getString(str,String.valueOf(O_PLAY)).charAt(0));
+            }
 
+           index++;
+        }
+
+    }
+    //
     @Override
     public void onPause() {
         super.onPause();
@@ -89,7 +121,18 @@ public class GamePlayActivity extends AppCompatActivity implements View.OnClickL
         } */
 
         if(id > 0 )
-        {        NavUtils.navigateUpFromSameTask(this);
+        {
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+
+            for(int i =0; i< 9; i++)
+            {
+                editor.putString(buttonNames[i],String.valueOf(stateButton[i]));
+            }
+            editor.putString("playing_active_paused",sharedPreferences.getString("active_player","Lola"));
+            editor.commit();
+
+            NavUtils.navigateUpFromSameTask(this);
                  return true;
         }
         return super.onOptionsItemSelected(item);
@@ -120,7 +163,7 @@ public class GamePlayActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public void onClick(View v) {
         int indexToPlaceCharacter = buttonIndexRelation.get(v.getId());
-        UICharacterPlace(indexToPlaceCharacter,this.playerSelected);
+        UICharacterPlace(indexToPlaceCharacter,this.playerSelected,0);
 
         int returnValue = gamePlay.place(indexToPlaceCharacter);
         switch (returnValue) {
@@ -129,24 +172,17 @@ public class GamePlayActivity extends AppCompatActivity implements View.OnClickL
                 return;
             case UtilityVariables.GAME_COMPLETED:
                 Toast.makeText(this, "GAME COMPLETED!!", Toast.LENGTH_LONG).show();
-                // showDialogDraw();
+                showDialogDraw();
                 return;
             case UtilityVariables.GO_ON:
-                try {
-                    Thread.sleep(1000);
-                }
-                catch (Exception ex)
-                {
-                    ex.printStackTrace();
-                }
-
-                UICharacterPlace( gamePlay.getLatestAIMove(),O_PLAY);
+                UICharacterPlace( gamePlay.getLatestAIMove(),O_PLAY,0);
                 Toast.makeText(this, "GO ON!!!", Toast.LENGTH_LONG).show();
                 break;
             case UtilityVariables.YOU_WON:
                 Toast.makeText(this, "Someone has won!!", Toast.LENGTH_LONG).show();
                 showDialogWin();
                 return;
+
         }
 
 
@@ -156,99 +192,111 @@ public class GamePlayActivity extends AppCompatActivity implements View.OnClickL
     }
 
 
-    void UICharacterPlace(int whereToPlaceCharacter, char playerSelected)
+    void UICharacterPlace(int whereToPlaceCharacter, char playerSelected, int alt)
     {
+        //alt =0 is normal order
+        stateButton[whereToPlaceCharacter] = playerSelected;
+        int alt_main, alt_side;
+        if(alt == 0){
+            alt_main = View.INVISIBLE;
+            alt_side = View.VISIBLE;
+        }
+        else {
+            alt_main = View.VISIBLE;
+            alt_side = View.INVISIBLE;
+        }
+
         switch (whereToPlaceCharacter)
         {
             case 0:
-
                 if(playerSelected == X_PLAY) {
-                    findViewById(R.id.button1).setVisibility(View.INVISIBLE);
-                    findViewById(R.id.image11).setVisibility(View.VISIBLE);
+                    findViewById(R.id.button1).setVisibility(alt_main);
+                    findViewById(R.id.image11).setVisibility(alt_side);
                 }
-                else {
-                    findViewById(R.id.button1).setVisibility(View.INVISIBLE);
-                    findViewById(R.id.image12).setVisibility(View.VISIBLE);
+                if (playerSelected == O_PLAY) {
+                    findViewById(R.id.button1).setVisibility(alt_main);
+                    findViewById(R.id.image12).setVisibility(alt_side);
                 }
                 break;
             case 1:
                 if(playerSelected == X_PLAY) {
-                    findViewById(R.id.button2).setVisibility(View.INVISIBLE);
-                    findViewById(R.id.image21).setVisibility(View.VISIBLE);
+                    findViewById(R.id.button2).setVisibility(alt_main);
+                    findViewById(R.id.image21).setVisibility(alt_side);
                 }
-                else {
-                    findViewById(R.id.button2).setVisibility(View.INVISIBLE);
-                    findViewById(R.id.image22).setVisibility(View.VISIBLE);
+                if (playerSelected == O_PLAY) {
+                    findViewById(R.id.button2).setVisibility(alt_main);
+                    findViewById(R.id.image22).setVisibility(alt_side);
                 }
                 break;
             case 2:
                 if(playerSelected == X_PLAY) {
-                    findViewById(R.id.button3).setVisibility(View.INVISIBLE);
-                    findViewById(R.id.image31).setVisibility(View.VISIBLE);
+                    findViewById(R.id.button3).setVisibility(alt_main);
+                    findViewById(R.id.image31).setVisibility(alt_side);
                 }
-                else {
-                    findViewById(R.id.button3).setVisibility(View.INVISIBLE);
-                    findViewById(R.id.image32).setVisibility(View.VISIBLE);
+                if (playerSelected == O_PLAY) {
+                    findViewById(R.id.button3).setVisibility(alt_main);
+                    findViewById(R.id.image32).setVisibility(alt_side);
                 }
                 break;
             case 3:
                 if(playerSelected == X_PLAY) {
-                    findViewById(R.id.button4).setVisibility(View.INVISIBLE);
-                    findViewById(R.id.image41).setVisibility(View.VISIBLE);
+                    findViewById(R.id.button4).setVisibility(alt_main);
+                    findViewById(R.id.image41).setVisibility(alt_side);
                 }
-                else {
-                    findViewById(R.id.button4).setVisibility(View.INVISIBLE);
-                    findViewById(R.id.image42).setVisibility(View.VISIBLE);
+                if (playerSelected == O_PLAY) {
+                    findViewById(R.id.button4).setVisibility(alt_main);
+                    findViewById(R.id.image42).setVisibility(alt_side);
                 }
                 break;
             case 4:
                 if(playerSelected == X_PLAY) {
-                    findViewById(R.id.button5).setVisibility(View.INVISIBLE);
-                    findViewById(R.id.image51).setVisibility(View.VISIBLE);
+                    findViewById(R.id.button5).setVisibility(alt_main);
+                    findViewById(R.id.image51).setVisibility(alt_side);
                 }
-                else {
-                    findViewById(R.id.button5).setVisibility(View.INVISIBLE);
-                    findViewById(R.id.image52).setVisibility(View.VISIBLE);
+                if (playerSelected == O_PLAY) {
+                    findViewById(R.id.button5).setVisibility(alt_main);
+                    findViewById(R.id.image52).setVisibility(alt_side);
                 }
                 break;
+
             case 5:
                 if(playerSelected == X_PLAY) {
-                    findViewById(R.id.button6).setVisibility(View.INVISIBLE);
-                    findViewById(R.id.image61).setVisibility(View.VISIBLE);
+                    findViewById(R.id.button6).setVisibility(alt_main);
+                    findViewById(R.id.image61).setVisibility(alt_side);
                 }
-                else {
-                    findViewById(R.id.button6).setVisibility(View.INVISIBLE);
-                    findViewById(R.id.image62).setVisibility(View.VISIBLE);
+                if (playerSelected == O_PLAY) {
+                    findViewById(R.id.button6).setVisibility(alt_main);
+                    findViewById(R.id.image62).setVisibility(alt_side);
                 }
                 break;
             case 6:
                 if(playerSelected == X_PLAY) {
-                    findViewById(R.id.button7).setVisibility(View.INVISIBLE);
-                    findViewById(R.id.image71).setVisibility(View.VISIBLE);
+                    findViewById(R.id.button7).setVisibility(alt_main);
+                    findViewById(R.id.image71).setVisibility(alt_side);
                 }
-                else {
-                    findViewById(R.id.button7).setVisibility(View.INVISIBLE);
-                    findViewById(R.id.image72).setVisibility(View.VISIBLE);
+                if (playerSelected == O_PLAY) {
+                    findViewById(R.id.button7).setVisibility(alt_main);
+                    findViewById(R.id.image72).setVisibility(alt_side);
                 }
                 break;
             case 7:
                 if(playerSelected == X_PLAY) {
-                    findViewById(R.id.button8).setVisibility(View.INVISIBLE);
-                    findViewById(R.id.image81).setVisibility(View.VISIBLE);
+                    findViewById(R.id.button8).setVisibility(alt_main);
+                    findViewById(R.id.image81).setVisibility(alt_side);
                 }
-                else {
-                    findViewById(R.id.button8).setVisibility(View.INVISIBLE);
-                    findViewById(R.id.image82).setVisibility(View.VISIBLE);
+                if (playerSelected == O_PLAY) {
+                    findViewById(R.id.button8).setVisibility(alt_main);
+                    findViewById(R.id.image82).setVisibility(alt_side);
                 }
                 break;
             case 8:
                 if(playerSelected == X_PLAY) {
-                    findViewById(R.id.button9).setVisibility(View.INVISIBLE);
-                    findViewById(R.id.image91).setVisibility(View.VISIBLE);
+                    findViewById(R.id.button9).setVisibility(alt_main);
+                    findViewById(R.id.image91).setVisibility(alt_side);
                 }
-                else {
-                    findViewById(R.id.button9).setVisibility(View.INVISIBLE);
-                    findViewById(R.id.image92).setVisibility(View.VISIBLE);
+                if (playerSelected == O_PLAY) {
+                    findViewById(R.id.button9).setVisibility(alt_main);
+                    findViewById(R.id.image92).setVisibility(alt_side);
                 }
                 break;
         }
@@ -259,17 +307,22 @@ public class GamePlayActivity extends AppCompatActivity implements View.OnClickL
         showDialog.setContentView(R.layout.you_won);
         ImageView closePopUpYouWonImg = (ImageView)showDialog.findViewById(R.id.closeWonGamePopUpImg);
         Button btnWon = (Button) showDialog.findViewById(R.id.positiveButton);
-        btnWon.setOnClickListener(new View.OnClickListener()
-        {
-
+        btnWon.setOnClickListener(new CallBackResolver());
+        closePopUpYouWonImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showDialog.dismiss();
             }
         });
-
         showDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         showDialog.show();
+
+    }
+
+    void refreshEverything()
+    {
+        Arrays.fill(stateButton,NO_PLAY);
+
     }
 
     void showDialogDraw()
@@ -286,15 +339,28 @@ public class GamePlayActivity extends AppCompatActivity implements View.OnClickL
             }
         });
 
-        btnWon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-
-            }
-        });
+        btnWon.setOnClickListener(new CallBackResolver());
 
         showDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         showDialog.show();
     }
+
+
+
+    class CallBackResolver implements View.OnClickListener
+    {
+        @Override
+        public void onClick(View v) {
+            showDialog.dismiss();
+            //UiRefresh
+            for (int i=0; i<9; i++)
+            {
+                UICharacterPlace(i,stateButton[i],1);
+            }
+            gamePlay.refresh();
+        }
+    }
+
+
 }
+

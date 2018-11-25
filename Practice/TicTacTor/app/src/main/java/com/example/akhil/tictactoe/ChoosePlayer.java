@@ -35,6 +35,15 @@ public class ChoosePlayer extends AppCompatActivity {
             mPlayerFound.setText("Hi "+ playerName+ " . Continue playing the game!!!");
             findViewById(R.id.button_player_found).setVisibility(View.VISIBLE);
         }
+
+        findViewById(R.id.button_player_found).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ChoosePlayer.this,GamePlayActivity.class);
+                intent.putExtra(Intent.EXTRA_TEXT,"continue");
+                startActivity(intent);
+            }
+        });
         mButtonNewGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

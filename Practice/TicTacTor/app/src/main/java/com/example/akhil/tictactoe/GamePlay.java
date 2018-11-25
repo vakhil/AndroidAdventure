@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.example.akhil.tictactoe.Utility.UtilityVariables;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
@@ -23,10 +24,20 @@ import java.util.Random;
         this.playerCharacter = playerCharacter;
     }
 
+    public void refresh()
+    {
+        Arrays.fill(boxes,UtilityVariables.EMPTY_FLAG);
+    }
     public int getLatestAIMove()
     {
         return latestAIMove;
     }
+
+    public void restoreValues(int boxNo, char playerCharacter)
+    {
+        boxes[boxNo] = playerCharacter;
+    }
+
     public int place(int boxNo)
     {
         if(boxes[boxNo] != UtilityVariables.EMPTY_FLAG )

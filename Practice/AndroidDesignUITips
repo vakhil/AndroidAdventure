@@ -1,5 +1,8 @@
 Android UI Design-Tips:
 
+Interestnig UI Links:
+a) https://www.youtube.com/watch?v=dmoiy1aPA9I
+
 RelativeLayout--> All you need to know
 
 Refer this: https://abhiandroid.com/ui/relative-layout
@@ -110,3 +113,101 @@ Adding comment section in FaceBook. An icon of DP and comment section where each
 Any help on drawables can be obtained here --> How to draw shapes and drawables
 https://android.jlelse.eu/android-shape-drawables-tutorial-17fbece6fef5
 You can 
+
+
+############################################################################
+
+Generally, the theme of yuour App is mentioned in AndoridManifest where you can specify the theme of entire app or you can also mention the theme of your Activity. <application android:theme="@style/AppTheme"> . This theme is mentioned in styles.xml in values folder or resource directory. 
+
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+Here, we can see that parent mentioned here is NoActionBar which means no Mentioned.
+
+Suppose, we need to create a View which has different theme other than the nomal theme of the whole App. How would do you it?
+
+We create a new theme in styles.xml and make the parent of the theme to ThemeOverlay.AppCompat indicate it is Overlaying Theme
+
+<style name="ThemeOverlay.AccentSecondary"
+       parent="ThemeOverlay.AppCompat">
+  <item name=”primaryColor>@color/primary_second</item>       
+  <item name=”colorAccent”>@color/accent_secondary</item>
+</style>
+
+
+Now, we add the theme in the theme option for View liek textView or EditView like this. Basically, it is changing the colorAccent and colorAccent for the Originally defined theme in Android Manifest. So, basically if you want to overlay set the parent of the theme to be ThemeOverlay.secondary
+
+<TextView android:theme ="@style/ThemeOverlay.AccentSecondary">
+
+Now, there are some Pre-defined themes like ThemeOverlay.AppCompat.Dark which changes coloring and TExt so that it has a dark background with light text.
+
+If we set the main theme of the Application as Theme.AppCompat.Light.NoActionBar, we need to create an Toolbar and this needs a theme. So, we set the theme ThemeOverlay.AppCompat.Dark.ActionBar which particulary makes colorControlNormal to be android:textColorPrimary, thus making any text and icons Opaque. We need to set the background of the toolbar as ?colorPrimary. 
+
+<android.support.v7.widget.Toolbar
+    android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:background="?colorPrimary"
+            android:layout_width="match_parent"
+    android:layout_height="?actionBarSize"/>
+
+
+#####################################################################
+Taking apart the UI Design --> custom Toolbar if needed
+
+<ToolBar 
+    app:contentInsetEnd="xx dp" --> In the title menu, we can set the Text(content) to be xx dp away from Screen
+    app:PopUpTheme="Theme.ThemeOverlay.AppCompat.Dark" sets dark background on white Text />
+
+      <android.support.v7.widget.Toolbar
+    android:id="@+id/appbar_toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="?actionBarSize"
+    android:background="?colorPrimary"
+    android:elevation="@dimen/toolbar_elevation"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+    app:contentInsetStart="@dimen/content_inset"
+    app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+    app:title="@string/app_name"
+    app:titleTextColor="@android:color/white"
+    tools:ignore="UnusedAttribute"/>
+
+
+NOw, we write a button, which is toggled between 2 states-> state_enbaled and disabled
+        <Button
+            android:id="@+id/affixButton"
+            style="@style/AccentButton"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            />
+
+In styles.xml folder
+    <style name="AccentButton">
+        <item name="android:textColor">@color/accent_button_textselector</item>
+        <item name="android:background">@drawable/accent_button</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/button_height</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+
+In Color/accent_button_texselector.xml
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@android:color/white" android:state_enabled="true" />
+    <item android:color="#42000000" android:state_enabled="false" />
+</selector>
+
+#####################################################################
+
+If you want to create ripples in android, you can do in 2 ways :
+
+<TextView android:background = "?android:attr/selectableItemBackgroundBorderLess" />
+
+or
+
+<TextView android:background = "@drawable/ripple.xml"/>
+
+In ripple.xml:
+<ripple xmnls:android="http://schemas.android.com/apk/res/android"
+android:color ="@android:color/holopurple">
+  <item android:drawable="@android:color/white" />
+</ripple>
